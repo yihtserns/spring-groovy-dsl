@@ -71,4 +71,54 @@ class GroovyBeanDefinitionReaderTest {
         assert bean.name == 'My Bean'
         assert bean.number == 3
     }
+
+    @Test
+    public void 'can create bean with property parameters'() {
+        String script = """
+            import com.github.yihtserns.spring.groovy.TestBean
+
+            bean = TestBean.new() {
+                displayName = 'The Bean'
+                valid = true
+            }
+        """
+
+        def appContext = new GenericApplicationContext()
+        appContexts << appContext
+
+        def reader = new GroovyBeanDefinitionReader(appContext)
+        reader.loadBeanDefinitions(new ByteArrayResource(script.bytes))
+
+        appContext.refresh()
+        def bean = appContext.getBean('bean')
+
+        assert bean.displayName == 'The Bean'
+        assert bean.valid == true
+    }
+
+    @Test
+    public void 'can create bean with constructor and property parameters'() {
+        String script = """
+            import com.github.yihtserns.spring.groovy.TestBean
+
+            bean = TestBean.new('My Bean', 3) {
+                displayName = 'The Bean'
+                valid = true
+            }
+        """
+
+        def appContext = new GenericApplicationContext()
+        appContexts << appContext
+
+        def reader = new GroovyBeanDefinitionReader(appContext)
+        reader.loadBeanDefinitions(new ByteArrayResource(script.bytes))
+
+        appContext.refresh()
+        def bean = appContext.getBean('bean')
+
+        assert bean.name == 'My Bean'
+        assert bean.number == 3
+        assert bean.displayName == 'The Bean'
+        assert bean.valid == true
+    }
 }

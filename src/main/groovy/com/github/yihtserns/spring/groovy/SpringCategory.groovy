@@ -24,10 +24,23 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder
 class SpringCategory {
 
     static BeanDefinition 'new'(Class type, Object[] constructorArgs) {
+        Closure configureProperties = {}
+
+        if (constructorArgs.length != 0 && constructorArgs.last() instanceof Closure) {
+            configureProperties = constructorArgs.last()
+            constructorArgs = constructorArgs.length == 1 ? [] : constructorArgs[0..-2] // Exclude last item
+        }
+
         BeanDefinitionBuilder bean = BeanDefinitionBuilder.genericBeanDefinition(type);
+        bean.metaClass.set = { String propName, Object propValue -> bean.addPropertyValue(propName, propValue) }
+
         constructorArgs.each { arg ->
             bean.addConstructorArgValue(arg)
         }
+
+        configureProperties.resolveStrategy = Closure.DELEGATE_FIRST
+        configureProperties.delegate  = bean
+        configureProperties()
 
         return bean.getBeanDefinition()
     }

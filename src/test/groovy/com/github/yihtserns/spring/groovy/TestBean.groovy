@@ -20,7 +20,9 @@ package com.github.yihtserns.spring.groovy;
  */
 class TestBean {
     String name
+    String displayName
     int number
+    boolean valid
 
     TestBean() {
     }
