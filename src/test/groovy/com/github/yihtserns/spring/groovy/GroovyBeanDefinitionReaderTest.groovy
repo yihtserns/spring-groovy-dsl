@@ -50,4 +50,25 @@ class GroovyBeanDefinitionReaderTest {
         appContext.refresh()
         assert appContext.getBean('bean') instanceof TestBean
     }
+
+    @Test
+    public void 'can create bean with constructor parameters'() {
+        String script = """
+            import com.github.yihtserns.spring.groovy.TestBean
+
+            bean = TestBean.new('My Bean', 3)
+        """
+
+        def appContext = new GenericApplicationContext();
+        appContexts << appContext
+
+        def reader = new GroovyBeanDefinitionReader(appContext)
+        reader.loadBeanDefinitions(new ByteArrayResource(script.bytes))
+
+        appContext.refresh()
+        def bean = appContext.getBean('bean')
+
+        assert bean.name == 'My Bean'
+        assert bean.number == 3
+    }
 }

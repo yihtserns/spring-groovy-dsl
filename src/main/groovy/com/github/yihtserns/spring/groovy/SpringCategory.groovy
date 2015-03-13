@@ -23,8 +23,11 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder
  */
 class SpringCategory {
 
-    static BeanDefinition 'new'(Class type) {
+    static BeanDefinition 'new'(Class type, Object[] constructorArgs) {
         BeanDefinitionBuilder bean = BeanDefinitionBuilder.genericBeanDefinition(type);
+        constructorArgs.each { arg ->
+            bean.addConstructorArgValue(arg)
+        }
 
         return bean.getBeanDefinition()
     }

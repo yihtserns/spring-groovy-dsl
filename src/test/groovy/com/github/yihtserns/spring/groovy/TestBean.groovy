@@ -18,5 +18,15 @@ package com.github.yihtserns.spring.groovy;
 /**
  * @author yihtserns
  */
-public class TestBean {
+class TestBean {
+    String name
+    int number
+
+    TestBean() {
+    }
+
+    TestBean(String name, int number) {
+        this.name = name
+        this.number = number
+    }
 }
