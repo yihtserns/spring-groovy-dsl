@@ -23,7 +23,11 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder
  */
 class SpringCategory {
 
-    static BeanDefinition 'new'(Class type, Object[] constructorArgs) {
+    static BeanDefinition 'new'(
+            Class type,
+            Map beanConfig = [scope: 'singleton'],
+            Object[] constructorArgs) {
+
         Closure configureProperties = {}
 
         if (constructorArgs.length != 0 && constructorArgs.last() instanceof Closure) {
@@ -32,12 +36,13 @@ class SpringCategory {
         }
 
         BeanDefinitionBuilder bean = BeanDefinitionBuilder.genericBeanDefinition(type);
-        bean.metaClass.set = { String propName, Object propValue -> bean.addPropertyValue(propName, propValue) }
+        bean.setScope(beanConfig.scope)
 
         constructorArgs.each { arg ->
             bean.addConstructorArgValue(arg)
         }
 
+        bean.metaClass.set = { String propName, Object propValue -> bean.addPropertyValue(propName, propValue) }
         configureProperties.resolveStrategy = Closure.DELEGATE_FIRST
         configureProperties.delegate  = bean
         configureProperties()

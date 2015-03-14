@@ -121,4 +121,46 @@ class GroovyBeanDefinitionReaderTest {
         assert bean.displayName == 'The Bean'
         assert bean.valid == true
     }
+
+    @Test
+    public void 'should create singleton bean by default'() {
+        String script = """
+            import com.github.yihtserns.spring.groovy.TestBean
+
+            bean = TestBean.new()
+        """
+
+        def appContext = new GenericApplicationContext()
+        appContexts << appContext
+
+        def reader = new GroovyBeanDefinitionReader(appContext)
+        reader.loadBeanDefinitions(new ByteArrayResource(script.bytes))
+
+        appContext.refresh()
+        def bean1 = appContext.getBean('bean')
+        def bean2 = appContext.getBean('bean')
+
+        assert bean1.is(bean2)
+    }
+
+    @Test
+    public void 'can create prototype bean'() {
+        String script = """
+            import com.github.yihtserns.spring.groovy.TestBean
+
+            bean = TestBean.new(scope: 'prototype')
+        """
+
+        def appContext = new GenericApplicationContext()
+        appContexts << appContext
+
+        def reader = new GroovyBeanDefinitionReader(appContext)
+        reader.loadBeanDefinitions(new ByteArrayResource(script.bytes))
+
+        appContext.refresh()
+        def bean1 = appContext.getBean('bean')
+        def bean2 = appContext.getBean('bean')
+
+        assert !bean1.is(bean2)
+    }
 }
