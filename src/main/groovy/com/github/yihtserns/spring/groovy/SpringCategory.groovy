@@ -19,6 +19,16 @@ import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.beans.factory.support.BeanDefinitionBuilder
 
 /**
+ * <h3>Usage example</h3>
+ * <pre>
+ * GenericApplicationContext ctx = new GenericApplicationContext()
+ * use (SpringCategory) {
+ *     ctx.registerBeanDefinition('myBean', MyBean.new())
+ * }
+ * ctx.refresh()
+ *
+ * MyBean myBean = (MyBean) ctx.getBean('myBean')
+ * </pre>
  * @author yihtserns
  */
 class SpringCategory {
